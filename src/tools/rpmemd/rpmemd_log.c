@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,13 +33,6 @@
 /*
  * rpmemd_log.c -- rpmemd logging functions definitions
  */
-/* for GNU version of basename */
-/* XXX Consider changing to Posix basename for consistency */
-#ifdef __FreeBSD__
-#include <libgen.h>
-#else
-#define _GNU_SOURCE
-#endif
 #include <errno.h>
 #include <stdio.h>
 #include <syslog.h>
@@ -196,7 +189,7 @@ rpmemd_log(enum rpmemd_log_level level, const char *fname, int lineno,
 	int ret;
 	if (fname) {
 		ret = snprintf(&buff[cnt], RPMEMD_MAX_MSG - cnt,
-				"[%s:%d] ", basename(fname), lineno);
+				"[%s:%d] ", fname, lineno);
 		if (ret < 0)
 			RPMEMD_FATAL("snprintf failed: %d", ret);
 		if ((unsigned)ret >= RPMEMD_MAX_MSG - cnt)
