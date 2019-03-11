@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,20 @@
 
 #define FORMAT_PRINTF(a, b) __attribute__((__format__(__printf__, (a), (b))))
 
+static inline const char *
+rpmemd_log_basename(const char *fname)
+{
+	const char *s;
+
+	if (fname == NULL)
+		return NULL;
+	s = strrchr(fname, '/');
+	if (s != NULL)
+		return s + 1;
+	else
+		return fname;
+}
+
 /*
  * The tab character is not allowed in rpmemd log,
  * because it is not well handled by syslog.
@@ -49,7 +63,7 @@
 #ifdef DEBUG
 #define RPMEMD_LOG(level, fmt, arg...) do {\
 	COMPILE_ERROR_ON(strchr(fmt, '\t') != 0);\
-	rpmemd_log(RPD_LOG_##level, __FILE__, __LINE__, fmt, ## arg);\
+	rpmemd_log(RPD_LOG_##level, rpmemd_log_basename(__FILE__), __LINE__, fmt, ## arg);\
 } while (0)
 #else
 #define RPMEMD_LOG(level, fmt, arg...) do {\
@@ -61,7 +75,7 @@
 #ifdef DEBUG
 #define RPMEMD_DBG(fmt, arg...) do {\
 	COMPILE_ERROR_ON(strchr(fmt, '\t') != 0);\
-	rpmemd_log(_RPD_LOG_DBG, __FILE__, __LINE__, fmt, ## arg);\
+	rpmemd_log(_RPD_LOG_DBG, rpmemd_log_basename(__FILE__), __LINE__, fmt, ## arg);\
 } while (0)
 #else
 #define RPMEMD_DBG(fmt, arg...) do {} while (0)
@@ -78,7 +92,7 @@
 
 #define RPMEMD_ASSERT(cond) do {\
 	if (!(cond)) {\
-		rpmemd_log(RPD_LOG_ERR, __FILE__, __LINE__,\
+		rpmemd_log(RPD_LOG_ERR, rpmemd_log_basename(__FILE__), __LINE__,\
 			"assertion fault: %s", #cond);\
 		abort();\
 	}\
