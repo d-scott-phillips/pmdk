@@ -430,7 +430,7 @@ err:
 static void
 queue_free_worker_list(struct obj_worker *obj_worker)
 {
-	while (!PMDK_CIRCLEPMDK_Q_EMPTY(&obj_worker->headq)) {
+	while (!PMDK_CIRCLEQ_EMPTY(&obj_worker->headq)) {
 		struct item *tmp = PMDK_CIRCLEQ_LAST(&obj_worker->headq);
 		PMDK_CIRCLEQ_REMOVE(&obj_worker->headq, tmp, fieldq);
 		free(tmp);

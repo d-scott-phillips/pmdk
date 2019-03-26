@@ -583,7 +583,7 @@ struct {								\
 /*
  * Circular queue access methods.
  */
-#define	PMDK_CIRCLEPMDK_Q_EMPTY(head)		((head)->cqh_first == (void *)(head))
+#define	PMDK_CIRCLEQ_EMPTY(head)		((head)->cqh_first == (void *)(head))
 #define	PMDK_CIRCLEQ_FIRST(head)		((head)->cqh_first)
 #define	PMDK_CIRCLEQ_LAST(head)		((head)->cqh_last)
 #define	PMDK_CIRCLEQ_NEXT(elm, field)	((elm)->field.cqe_next)
@@ -625,10 +625,10 @@ struct {								\
 /*
  * Sorted queue access methods.
  */
-#define	PMDK_SORTEDQ_EMPTY(head)			PMDK_CIRCLEPMDK_Q_EMPTY(head)
+#define	PMDK_SORTEDQ_EMPTY(head)			PMDK_CIRCLEQ_EMPTY(head)
 #define	PMDK_SORTEDQ_FIRST(head)			PMDK_CIRCLEQ_FIRST(head)
 #define	PMDK_SORTEDQ_LAST(head)			PMDK_CIRCLEQ_LAST(head)
-#define	PMDK_SORTEDQ_NEXT(elm, field)		CIRCLEQ_NEXT(elm, field)
+#define	PMDK_SORTEDQ_NEXT(elm, field)		PMDK_CIRCLEQ_NEXT(elm, field)
 #define	PMDK_SORTEDQ_PREV(elm, field)		PMDK_CIRCLEQ_PREV(elm, field)
 
 #endif	/* sys/queue.h */
