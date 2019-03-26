@@ -6,4 +6,32 @@ task:
     autoconf bash binutils coreutils e2fsprogs-libuuid
     git gmake libunwind ncurses pkgconf
 
-  script: CFLAGS="-Wno-unused-value -DENODATA=ENOATTR" gmake
+  build_script: gmake -j $(sysctl -n kern.smp.cpus) EXTRA_CFLAGS="-Wno-unused-value -Wno-unused-macros"
+  testconfig_sh_setup_script: |
+    cat << 'EOF' > src/test/testconfig.sh
+    LONGDIR=Loremipsum
+    TEST_TYPE=short
+    DIRSUFFIX="$LONGDIR/$LONGDIR/$LONGDIR/$LONGDIR/$LONGDIR"
+    NON_PMEM_FS_DIR=/tmp
+    PMEM_FS_DIR=/tmp
+    PMEM_FS_DIR_FORCE_PMEM=1
+    TEST_BUILD="debug nondebug"
+    ENABLE_SUDO_TESTS=n
+    TM=1
+    EOF
+  testconfig_py_setup_script: |
+    cat << 'EOF' >> src/test/testconfig.py
+    config = {
+      'unittest_log_level': 1,
+      'pmem_fs_dir': '/tmp',
+      'non_pmem_fs_dir': '/tmp',
+      'tm': True,
+      'test_type': 'check',
+      'fs': 'all',
+      'fs_dir_force_pmem': 0,
+      'keep_going': False,
+      'timeout': '3m',
+      'build': ['debug', 'nondebug']
+    }
+    EOF
+  test_script: gmake -j $(sysctl -n kern.smp.cpus) check
